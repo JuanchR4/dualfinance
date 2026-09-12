@@ -1,0 +1,8 @@
+// Extras de interacción de la interfaz
+let selectedTx=null;
+function showDetail(tx){selectedTx=tx;$('#detailIcon').textContent=tx[1]==='income'?'↗':'↘';$('#detailTitle').textContent=tx[0];$('#detailAmount').textContent=(tx[1]==='income'?'+':'−')+money(tx[2]);$('#detailAmount').className=tx[1]==='income'?'positive':'negative';$('#detailDate').textContent=tx[4];$('#detailMethod').textContent=tx[3];$('#detailCategory').textContent=tx[5]||'Sin categoría';$('#detailModal').classList.remove('hidden')}
+$('#txList').addEventListener('click',e=>{let row=e.target.closest('.tx');if(!row)return;let rows=state[book].tx.filter(x=>($('#filter')?.value||'all')==='all'||x[1]===$('#filter').value);showDetail(rows[Number(row.dataset.index)])});
+$('#detailClose').onclick=()=>$('#detailModal').classList.add('hidden');
+$('#deleteBtn').onclick=()=>{if(!selectedTx)return;let d=state[book],i=d.tx.indexOf(selectedTx);if(i<0)return;if(selectedTx[1]==='expense'){d.balance+=selectedTx[2];d.accounts[selectedTx[3]]+=selectedTx[2]}else if(selectedTx[1]==='income'){d.balance-=selectedTx[2];d.accounts[selectedTx[3]]-=selectedTx[2]}d.tx.splice(i,1);$('#detailModal').classList.add('hidden');render();toast('Movimiento eliminado')};
+$('#navTx').onclick=()=>{document.querySelector('.transactions').scrollIntoView({behavior:'smooth'});toast('Historial de movimientos')};
+$('#navMore').onclick=()=>{let action=prompt('Escribe: respaldo, oscuro o meta');if(action==='respaldo')$('#exportBtn').click();else if(action==='oscuro')$('#themeBtn').click();else if(action==='meta')document.querySelector('.goal').scrollIntoView({behavior:'smooth'})};
